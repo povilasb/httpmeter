@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock, ANY
 
 from asynctest import CoroutineMock
 import pytest
-from hamcrest import assert_that, is_
+from hamcrest import assert_that, is_, equal_to
 
 from httpmeter import net
 
@@ -19,6 +19,18 @@ def describe_HttpRequests():
             assert_that(tasks, is_(['req1', 'req2', 'req3']))
 
     def describe_make_get():
+        def describe_when_proxy_is_set():
+            @pytest.mark.asyncio
+            async def it_executes_request_via_proxy():
+                reqs = net.HttpRequests().via_proxy('http://localhost:8080')
+                reqs._on_response = MagicMock()
+
+                with patch('aiohttp.request', CoroutineMock()) as request:
+                    await reqs.make_get('http://example.com', 0)
+
+                    request.assert_called_with(
+                        ANY, ANY, connector=ANY, proxy='http://localhost:8080')
+
         @pytest.mark.asyncio
         async def it_delegates_response_handling_to_on_response():
             reqs = net.HttpRequests()
@@ -43,6 +55,14 @@ def describe_HttpRequests():
             assert_that(requests[0].call_count, is_(1))
             assert_that(requests[1].call_count, is_(1))
             assert_that(requests[2].call_count, is_(1))
+
+    def describe_via_proxy():
+        def it_returns_pointer_to_self_object():
+            reqs = net.HttpRequests()
+
+            new_reqs = reqs.via_proxy('localhost:8080')
+
+            assert_that(new_reqs, equal_to(reqs))
 
 
 class AsyncMock(MagicMock):

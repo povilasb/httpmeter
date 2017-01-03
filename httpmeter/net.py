@@ -15,23 +15,20 @@ class RequestStats:
         self.duration = duration
 
     def __str__(self) -> str:
-        return '{{{} {} {}}}'.format(self.duration, self.content_size,
-                                     self.status_code)
+        return str((self.duration, self.content_size, self.status_code))
 
     __repr__ = __str__
 
 
 class HttpRequests:
+    """Executes HTTP requests."""
 
     def __init__(self, loop=None) -> None:
         self._verbose = False
         self._loop = loop or asyncio.get_event_loop()
         self._connector = aiohttp.TCPConnector(verify_ssl=False)
         self._stats = []
-
-    def verbose(self, value: bool) -> 'HttpRequest':
-        self._verbose = value
-        return self
+        self._proxy_url = None
 
     def exec_to(self, url: str, concurrency: int,
                 total_requests: int) -> List[RequestStats]:
@@ -46,12 +43,21 @@ class HttpRequests:
 
         return self._stats
 
+    def verbose(self, value: bool) -> 'HttpRequest':
+        self._verbose = value
+        return self
+
+    def via_proxy(self, proxy_url: str) -> 'HttpRequest':
+        self._proxy_url = proxy_url
+        return self
+
     def make_requests(self, url: str, count: int) -> Iterable[Awaitable]:
         return reduce(lambda reqs, _: reqs + [self.make_get(url, time.time())],
                       range(count), [])
 
     async def make_get(self, url: str, start_time: float) -> Awaitable:
-        resp = await aiohttp.request('GET', url, connector=self._connector)
+        resp = await aiohttp.request('GET', url, connector=self._connector,
+                                     proxy=self._proxy_url)
         text = await resp.read()
         self._on_response(text, resp.status, start_time)
 
