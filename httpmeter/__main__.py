@@ -1,11 +1,15 @@
-from . import net
+import sys
+
+from . import net, cli
 
 
-def main() -> None:
-    requests = net.HttpRequests().verbose(True).via_proxy('http://localhost:8081')
-    stats = requests.exec_to('https://httpbin.org/ip', 1, 3)
+def main(args) -> None:
+    conf = cli.parse_args(args)
+    requests = net.HttpRequests()\
+        .verbose(False)
+    stats = requests.exec_to(conf.url, conf.concurrency, conf.requests)
     print(stats)
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])
