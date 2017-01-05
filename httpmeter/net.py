@@ -5,6 +5,8 @@ from typing import Iterable, List, Awaitable
 
 import aiohttp
 
+from . import summary
+
 
 class RequestStats:
 
@@ -29,6 +31,7 @@ class HttpRequests:
         self._connector = aiohttp.TCPConnector(verify_ssl=False)
         self._stats = []
         self._proxy_url = None
+        self._progress = None
 
     def exec_to(self, url: str, concurrency: int,
                 total_requests: int) -> List[RequestStats]:
@@ -40,6 +43,8 @@ class HttpRequests:
                 asyncio.gather(*tasks, loop=self._loop))
 
         self._connector.close()
+        if self._progress:
+            self._progress.done()
 
         return self._stats
 
@@ -49,6 +54,11 @@ class HttpRequests:
 
     def via_proxy(self, proxy_url: str) -> 'HttpRequest':
         self._proxy_url = proxy_url
+        return self
+
+    def show_progress(
+            self, progress_output: summary.Progress) -> 'HttpRequest':
+        self._progress = progress_output
         return self
 
     def make_requests(self, url: str, count: int) -> Iterable[Awaitable]:
@@ -71,3 +81,6 @@ class HttpRequests:
 
         if self._verbose:
             print(resp_text)
+
+        if self._progress:
+            self._progress.update('.')
