@@ -56,17 +56,6 @@ def describe_HttpRequests():
             assert_that(requests[1].call_count, is_(1))
             assert_that(requests[2].call_count, is_(1))
 
-        def describe_when_progress_output_is_set():
-            def it_sets_progress_to_done():
-                progress = MagicMock()
-                reqs = net.HttpRequests(asyncio.new_event_loop())\
-                    .show_progress(progress)
-                reqs.make_requests = MagicMock()
-
-                reqs.exec_to('example.com', 3, 3)
-
-                assert_that(progress.done.call_count, is_(1))
-
     def describe_via_proxy():
         def it_returns_pointer_to_self_object():
             reqs = net.HttpRequests()
@@ -74,22 +63,6 @@ def describe_HttpRequests():
             new_reqs = reqs.via_proxy('localhost:8080')
 
             assert_that(new_reqs, equal_to(reqs))
-
-    def describe_on_response():
-        def describe_when_progress_output_is_set():
-            def it_updates_progress():
-                progress = MagicMock()
-                reqs = net.HttpRequests().show_progress(progress)
-
-                reqs._on_response('response', 200, 0)
-
-                progress.update.assert_called_with('.')
-
-        def describe_when_progress_output_is_not_set():
-            def it_does_not_update_progress():
-                reqs = net.HttpRequests()
-
-                reqs._on_response('response', 200, 0)
 
 
 class AsyncMock(MagicMock):
