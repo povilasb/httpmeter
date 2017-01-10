@@ -2,7 +2,7 @@ import sys
 import time
 from typing import List
 
-from . import net, cli, summary
+from . import net, cli, stats
 
 
 class RequestStats:
@@ -26,7 +26,7 @@ class Benchmark:
         self._conf = config
 
         self.stats = []
-        self.progress = summary.Progress()
+        self.progress = stats.Progress()
         self.requests = net.HttpRequests().on_response(self._on_response)
 
     def run(self) -> List[RequestStats]:
@@ -56,8 +56,8 @@ def time_it(cb) -> float:
 def main(args) -> None:
     conf = cli.parse_args(args)
 
-    stats, duration = time_it(Benchmark(conf).run)
-    print(summary.results_to_str(stats, duration, conf.concurrency))
+    test_stats, duration = time_it(Benchmark(conf).run)
+    print(stats.results_to_str(test_stats, duration, conf.concurrency))
 
 
 if __name__ == '__main__':
