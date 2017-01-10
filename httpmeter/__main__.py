@@ -1,5 +1,6 @@
 import sys
 import time
+from typing import List
 
 from . import net, cli, summary
 
@@ -28,11 +29,12 @@ class Benchmark:
         self.progress = summary.Progress()
         self.requests = net.HttpRequests().on_response(self._on_response)
 
-    def run(self) -> None:
+    def run(self) -> List[RequestStats]:
         """Executes benchmark."""
         self.requests.exec_to(self._conf.url, self._conf.concurrency,
                               self._conf.requests)
         self.progress.done()
+        return self.stats
 
     def _on_response(self, resp_text: str, status_code: int,
                      request_start_time: float) -> None:
@@ -45,9 +47,17 @@ class Benchmark:
         self.progress.update('.')
 
 
+def time_it(cb) -> float:
+    start_time = time.time()
+    result = cb()
+    return result, time.time() - start_time
+
+
 def main(args) -> None:
     conf = cli.parse_args(args)
-    Benchmark(conf).run()
+
+    stats, duration = time_it(Benchmark(conf).run)
+    print(summary.results_to_str(stats, duration, conf.concurrency))
 
 
 if __name__ == '__main__':
