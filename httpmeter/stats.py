@@ -3,6 +3,21 @@ import time
 from typing import Dict, List, Any, Iterable
 
 
+class ForRequest:
+    """Stats for single request."""
+
+    def __init__(self, content_size: int, status_code: int,
+                 duration: int) -> None:
+        self.content_size = content_size
+        self.status_code = status_code
+        self.duration = duration
+
+    def __str__(self) -> str:
+        return str((self.duration, self.content_size, self.status_code))
+
+    __repr__ = __str__
+
+
 class Progress:
     """Displays responses progress."""
 
@@ -41,7 +56,7 @@ class BenchmarkResults:
         self.status_codes = status_codes
 
 
-def make_benchmark_results(stats: List['RequestStats'], duration: float,
+def make_benchmark_results(stats: List[ForRequest], duration: float,
                            concurrency: int) -> BenchmarkResults:
     status_codes = {}
     size = []

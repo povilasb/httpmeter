@@ -5,20 +5,6 @@ from typing import List
 from . import net, cli, stats
 
 
-class RequestStats:
-
-    def __init__(self, content_size: int, status_code: int,
-                 duration: int) -> None:
-        self.content_size = content_size
-        self.status_code = status_code
-        self.duration = duration
-
-    def __str__(self) -> str:
-        return str((self.duration, self.content_size, self.status_code))
-
-    __repr__ = __str__
-
-
 class Benchmark:
     """Benchmark is used to execute performance tests and collect results."""
 
@@ -29,7 +15,7 @@ class Benchmark:
         self.progress = stats.Progress()
         self.requests = net.HttpRequests().on_response(self._on_response)
 
-    def run(self) -> List[RequestStats]:
+    def run(self) -> List[stats.ForRequest]:
         """Executes benchmark."""
         self.requests.exec_to(self._conf.url, self._conf.concurrency,
                               self._conf.requests)
@@ -38,7 +24,7 @@ class Benchmark:
 
     def _on_response(self, resp_text: str, status_code: int,
                      request_start_time: float) -> None:
-        self.stats.append(RequestStats(
+        self.stats.append(stats.ForRequest(
             len(resp_text),
             status_code,
             time.time() - request_start_time
