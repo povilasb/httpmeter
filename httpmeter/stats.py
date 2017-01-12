@@ -1,13 +1,14 @@
 import sys
 import time
 from typing import Dict, List, Any, Iterable
+from functools import reduce
 
 
 class ForRequest:
     """Stats for single request."""
 
     def __init__(self, content_size: int, status_code: int,
-                 duration: int) -> None:
+                 duration: float) -> None:
         self.content_size = content_size
         self.status_code = status_code
         self.duration = duration
@@ -16,6 +17,26 @@ class ForRequest:
         return str((self.duration, self.content_size, self.status_code))
 
     __repr__ = __str__
+
+
+class ForBenchmark:
+    """Stats for whole benchmark."""
+
+    def __init__(self, stats: List[ForRequest]) -> None:
+        self.stats = stats
+
+    def content_sizes(self) -> Iterable[int]:
+        return map(lambda entry: entry.content_size, self.stats)
+
+    def durations(self) -> Iterable[int]:
+        return map(lambda entry: entry.duration, self.stats)
+
+    def status_codes(self) -> Dict[int, int]:
+        return reduce(lambda codes, entry: inc(codes, entry.status_code),
+                      self.stats, {})
+
+    def completed_results(self) -> int:
+        return len(self.stats)
 
 
 class Progress:
@@ -96,6 +117,7 @@ def results_to_str(stats: list, duration: float, concurrency: int) -> str:
 def inc(assoc_arr: dict, key: Any) -> None:
     """Increase by one or initialize value in associative array."""
     assoc_arr[key] = assoc_arr.get(key, 0) + 1
+    return assoc_arr
 
 
 def avg(iter: Iterable) -> float:
