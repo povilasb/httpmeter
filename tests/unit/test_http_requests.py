@@ -29,7 +29,22 @@ def describe_HttpRequests():
                     await reqs.make_get('http://example.com', 0)
 
                     request.assert_called_with(
-                        ANY, ANY, connector=ANY, proxy='http://localhost:8080')
+                        ANY, ANY, connector=ANY,
+                        headers=ANY, proxy='http://localhost:8080')
+
+        def describe_when_headers_are_set():
+            @pytest.mark.asyncio
+            async def it_executes_request_with_specified_headers():
+                reqs = net.HttpRequests().with_headers({
+                    'X-Header1': 'val1', 'X-Header2': 'val2'})
+
+                with patch('aiohttp.request', CoroutineMock()) as request:
+                    await reqs.make_get('http://example.com', 0)
+
+                    request.assert_called_with(
+                        ANY, ANY, connector=ANY,
+                        headers={'X-Header1': 'val1', 'X-Header2': 'val2'},
+                        proxy=ANY)
 
         @pytest.mark.asyncio
         async def it_delegates_response_handling_to_on_response():

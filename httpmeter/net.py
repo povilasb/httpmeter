@@ -1,7 +1,7 @@
 import asyncio
 from functools import reduce
 import time
-from typing import Iterable, Awaitable
+from typing import Iterable, Awaitable, Dict
 
 import aiohttp
 
@@ -13,6 +13,7 @@ class HttpRequests:
         self._loop = loop or asyncio.get_event_loop()
         self._connector = aiohttp.TCPConnector(verify_ssl=False)
         self._proxy_url = None
+        self._headers = None
         self._on_response = None
 
     def exec_to(self, url: str, concurrency: int,
@@ -28,6 +29,10 @@ class HttpRequests:
         self._proxy_url = proxy_url
         return self
 
+    def with_headers(self, headers: Dict[str, str]) -> 'HttpRequest':
+        self._headers = headers
+        return self
+
     def on_response(self, cb) -> 'HttpRequest':
         self._on_response = cb
         return self
@@ -37,8 +42,9 @@ class HttpRequests:
                       range(count), [])
 
     async def make_get(self, url: str, start_time: float) -> Awaitable:
-        resp = await aiohttp.request('GET', url, connector=self._connector,
-                                     proxy=self._proxy_url)
+        resp = await aiohttp.request(
+            'GET', url, connector=self._connector, proxy=self._proxy_url,
+            headers=self._headers)
         text = await resp.read()
-        if self.on_response:
+        if self._on_response:
             self._on_response(text, resp.status, start_time)
