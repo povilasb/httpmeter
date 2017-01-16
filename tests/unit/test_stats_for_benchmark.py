@@ -123,9 +123,9 @@ def describe_ForBenchmark():
 
             results = bench_stats.summary()
 
-            assert_that(results.min_conn_time, is_(0.25))
-            assert_that(results.avg_conn_time, is_(1.5))
-            assert_that(results.max_conn_time, is_(3))
+            assert_that(results.min_req_time, is_(0.25))
+            assert_that(results.avg_req_time, is_(1.5))
+            assert_that(results.max_req_time, is_(3))
 
         def it_returns_benchmark_results_status_codes_stats():
             bench_stats = stats.ForBenchmark([

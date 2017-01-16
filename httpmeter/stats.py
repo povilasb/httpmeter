@@ -25,7 +25,7 @@ class ForRequest:
 class BenchmarkResults:
     def __init__(self, min_doc_len: int, avg_doc_len: int, max_doc_len: int,
                  concurrency: int, completed_requests: int, reqs_per_sec: int,
-                 min_conn_time: int, avg_conn_time: int, max_conn_time: int,
+                 min_req_time: int, avg_req_time: int, max_req_time: int,
                  status_codes: Dict[str, int]) -> None:
         self.min_doc_len = min_doc_len
         self.avg_doc_len = avg_doc_len
@@ -33,9 +33,9 @@ class BenchmarkResults:
         self.concurrency = concurrency
         self.completed_requests = completed_requests
         self.reqs_per_sec = reqs_per_sec
-        self.min_conn_time = min_conn_time
-        self.avg_conn_time = avg_conn_time
-        self.max_conn_time = max_conn_time
+        self.min_req_time = min_req_time
+        self.avg_req_time = avg_req_time
+        self.max_req_time = max_req_time
         self.status_codes = status_codes
 
 
@@ -102,9 +102,9 @@ def results_to_str(results: BenchmarkResults) -> str:
         'Concurrency Level:        %d' % (results.concurrency),
         'Completed Requests:       %d' % (results.completed_requests),
         'Requests Per Second:      %f [#/sec] (mean)' % (results.reqs_per_sec),
-        'Connection Times Total:   [min: %f, avg: %f, max: %f] seconds'
-        % (results.min_conn_time, results.avg_conn_time,
-           results.max_conn_time),
+        'Request Durations:        [min: %f, avg: %f, max: %f] seconds'
+        % (results.min_req_time, results.avg_req_time,
+           results.max_req_time),
         'Document Length:          [min: %d, avg: %f, max: %d] bytes'
         % (results.min_doc_len, results.avg_doc_len, results.max_doc_len),
         'Status codes:',
