@@ -42,8 +42,10 @@ def time_it(cb) -> float:
 def main(args) -> None:
     conf = cli.parse_args(args)
 
-    test_stats, duration = time_it(Benchmark(conf).run)
-    print(stats.results_to_str(test_stats, duration, conf.concurrency))
+    requests_stats, duration = time_it(Benchmark(conf).run)
+    bench_results = stats.ForBenchmark(requests_stats, conf.concurrency,
+                                       duration).summary()
+    print(stats.results_to_str(bench_results))
 
 
 if __name__ == '__main__':

@@ -1,7 +1,10 @@
 import sys
 import time
-from typing import Dict, List, Any, Iterable
+from typing import Dict, List, Any, Iterable, Tuple
 from functools import reduce
+from itertools import tee
+
+from . import utils
 
 
 class ForRequest:
@@ -19,11 +22,36 @@ class ForRequest:
     __repr__ = __str__
 
 
+class BenchmarkResults:
+    def __init__(self, min_doc_len: int, avg_doc_len: int, max_doc_len: int,
+                 concurrency: int, completed_requests: int, reqs_per_sec: int,
+                 min_conn_time: int, avg_conn_time: int, max_conn_time: int,
+                 status_codes: Dict[str, int]) -> None:
+        self.min_doc_len = min_doc_len
+        self.avg_doc_len = avg_doc_len
+        self.max_doc_len = max_doc_len
+        self.concurrency = concurrency
+        self.completed_requests = completed_requests
+        self.reqs_per_sec = reqs_per_sec
+        self.min_conn_time = min_conn_time
+        self.avg_conn_time = avg_conn_time
+        self.max_conn_time = max_conn_time
+        self.status_codes = status_codes
+
+
+def min_avg_max(iter_: Iterable[int]) -> Tuple[int, float, int]:
+    it1, it2, it3 = tee(iter_, 3)
+    return min(it1), utils.avg(it2), max(it3)
+
+
 class ForBenchmark:
     """Stats for whole benchmark."""
 
-    def __init__(self, stats: List[ForRequest]) -> None:
+    def __init__(self, stats: List[ForRequest], concurrency: int=1,
+                 total_duration: float=1) -> None:
         self.stats = stats
+        self.concurrency = concurrency
+        self.duration = total_duration
 
     def content_sizes(self) -> Iterable[int]:
         return map(lambda entry: entry.content_size, self.stats)
@@ -35,8 +63,17 @@ class ForBenchmark:
         return reduce(lambda codes, entry: inc(codes, entry.status_code),
                       self.stats, {})
 
-    def completed_results(self) -> int:
+    def completed_requests(self) -> int:
         return len(self.stats)
+
+    def summary(self) -> BenchmarkResults:
+        return BenchmarkResults(
+            *min_avg_max(self.content_sizes()),
+            self.concurrency, self.completed_requests(),
+            self.completed_requests() / self.duration,
+            *min_avg_max(self.durations()),
+            self.status_codes()
+        )
 
 
 class Progress:
@@ -60,43 +97,7 @@ class Progress:
         return time.time() > (self._last_flushed + self._flush_interval)
 
 
-class BenchmarkResults:
-    def __init__(self, min_doc_len: int, avg_doc_len: int, max_doc_len: int,
-                 concurrency: int, completed_requests: int, reqs_per_sec: int,
-                 min_conn_time: int, avg_conn_time: int, max_conn_time: int,
-                 status_codes: Dict[str, int]) -> None:
-        self.min_doc_len = min_doc_len
-        self.avg_doc_len = avg_doc_len
-        self.max_doc_len = max_doc_len
-        self.concurrency = concurrency
-        self.completed_requests = completed_requests
-        self.reqs_per_sec = reqs_per_sec
-        self.min_conn_time = min_conn_time
-        self.avg_conn_time = avg_conn_time
-        self.max_conn_time = max_conn_time
-        self.status_codes = status_codes
-
-
-def make_benchmark_results(stats: List[ForRequest], duration: float,
-                           concurrency: int) -> BenchmarkResults:
-    status_codes = {}
-    size = []
-    time = []
-    completed_results = len(stats)
-
-    for entry in stats:
-        size.append(entry.content_size)
-        time.append(entry.duration)
-        inc(status_codes, entry.status_code)
-
-    return BenchmarkResults(
-            min(size), avg(size), max(size), concurrency, completed_results,
-            completed_results / duration,
-            min(time), avg(time), max(time), status_codes)
-
-
-def results_to_str(stats: list, duration: float, concurrency: int) -> str:
-    results = make_benchmark_results(stats, duration, concurrency)
+def results_to_str(results: BenchmarkResults) -> str:
     lines = [
         'Concurrency Level:        %d' % (results.concurrency),
         'Completed Requests:       %d' % (results.completed_requests),
@@ -118,7 +119,3 @@ def inc(assoc_arr: dict, key: Any) -> None:
     """Increase by one or initialize value in associative array."""
     assoc_arr[key] = assoc_arr.get(key, 0) + 1
     return assoc_arr
-
-
-def avg(iter: Iterable) -> float:
-    return sum(iter) / len(iter)
