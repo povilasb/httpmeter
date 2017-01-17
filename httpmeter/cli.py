@@ -1,5 +1,17 @@
 import argparse
-from typing import List
+from typing import List, Tuple
+
+
+def parse_header(header: str) -> Tuple[str, str]:
+    parts = header.split(':')
+    return (parts[0].strip(), parts[1].strip())
+
+
+class AppendHeader(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        name, value = parse_header(values)
+        headers = getattr(namespace, self.dest)
+        headers[name] = value
 
 
 def parse_args(args: List[str]):
@@ -9,8 +21,8 @@ def parse_args(args: List[str]):
         help='Number of multiple requests to perform at a time'
     )
     parser.add_argument(
-        '-H', '--header', metavar='custom-header', default=[],
-        nargs='*', type=str,
+        '-H', '--header', metavar='custom-header', default={},
+        type=str, action=AppendHeader, dest='headers',
         help='Append extra headers to the request.'
     )
     parser.add_argument(
@@ -19,8 +31,8 @@ def parse_args(args: List[str]):
     )
     parser.add_argument(
         '-P', '--proxy-auth',
-        metavar='proxy-auth-username:password', type=str,
-        help='Supply BASIC Authentication credentials to a proxy en-route.'
+        metavar='username:password', type=str,
+        help='Supply BASIC Authentication credentials to a proxy.'
     )
     parser.add_argument(
         '-X', '--proxy', metavar='proxy:port', type=str,
