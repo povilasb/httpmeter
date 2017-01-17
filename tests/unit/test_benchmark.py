@@ -6,6 +6,17 @@ from httpmeter.__main__ import Benchmark
 
 
 def describe_Bencmark():
+    def describe_constructor():
+        def it_instantiates_http_requests_with_headers_specified_in_config():
+            requests = MagicMock()
+            requests.on_response.return_value = requests
+
+            with patch('httpmeter.net.HttpRequests',
+                       MagicMock(return_value=requests)):
+                Benchmark(MagicMock(headers={'Connection': 'close'}))
+
+                requests.with_headers.assert_called_with({'Connection': 'close'})
+
     def describe__on_response():
         def it_updates_progress():
             bench = Benchmark(MagicMock())
