@@ -4,6 +4,10 @@ import time
 from typing import Iterable, Awaitable, Dict
 
 import aiohttp
+import uvloop
+
+
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 
 class HttpRequests:
