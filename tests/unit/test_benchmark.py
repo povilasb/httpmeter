@@ -17,6 +17,17 @@ def describe_Bencmark():
 
                 requests.with_headers.assert_called_with({'Connection': 'close'})
 
+        def it_instantiates_http_requests_with_proxy_specified_in_config():
+            requests = MagicMock()
+            requests.on_response.return_value = requests
+            requests.with_headers.return_value = requests
+
+            with patch('httpmeter.net.HttpRequests',
+                       MagicMock(return_value=requests)):
+                Benchmark(MagicMock(proxy='http://localhost:1080'))
+
+                requests.via_proxy.assert_called_with('http://localhost:1080')
+
     def describe__on_response():
         def it_updates_progress():
             bench = Benchmark(MagicMock())

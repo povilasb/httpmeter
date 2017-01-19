@@ -15,7 +15,8 @@ class Benchmark:
         self.progress = stats.Progress()
         self.requests = net.HttpRequests()\
             .on_response(self._on_response)\
-            .with_headers(config.headers)
+            .with_headers(config.headers)\
+            .via_proxy(config.proxy)
 
     def run(self) -> List[stats.ForRequest]:
         """Executes benchmark."""
