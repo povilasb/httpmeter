@@ -42,7 +42,7 @@ def time_it(cb) -> float:
     return result, time.time() - start_time
 
 
-def main(args) -> None:
+def main(args: list=sys.argv[1:]) -> None:
     conf = cli.parse_args(args)
 
     requests_stats, duration = time_it(Benchmark(conf).run)
@@ -52,4 +52,4 @@ def main(args) -> None:
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    main()
