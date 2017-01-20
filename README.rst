@@ -7,9 +7,51 @@ It supports traffic proxying for both HTTP and HTTPS, thus also can be used to
 test performance of proxy servers.
 
 It is implemented with asyncio and runs on Python >= 3.5.
+`uvloop <https://github.com/MagicStack/uvloop>`_ is used by default for
+better performance.
 
 Usage
 =====
+
+::
+
+    pip3 install httpmeter
+
+Synopsis::
+
+    httpmeter [options] URL
+
+Options::
+
+    -h  Display usage information.
+
+    -c, --concurrency <N>
+        How many requests should be executed in parallel.
+
+    -n, requests <N>
+        How many requests to make in total.
+
+    -H, --header <custom-header>
+        Additional headers to send with every request. Multiple entries
+        allowed. E.g.
+            --header "Connection: close" --header "User-Agent: benchmark"
+
+    -X, --proxy <proxy:port>
+        Proxy address. E.g. http://localhost:8080
+
+    -P, --proxy-auth <username:password>
+        User and password for proxy authentication.
+
+Other Tools
+===========
+
+* https://github.com/httperf/httperf
+* https://github.com/wg/wrk
+* http://httpd.apache.org/docs/current/programs/ab.html
+* https://github.com/borgstrom/httpbenchmark
+
+Development
+===========
 
 Get dependencies::
 
@@ -19,12 +61,4 @@ Get dependencies::
 Run the benchmark::
 
     $ pyenv/bin/python -m httpmeter -c 100 -n 500 -P username:password \
-        -X 1.2.3.4:8080 http://target.com
-
-Other Tools
-===========
-
-* https://github.com/httperf/httperf
-* https://github.com/wg/wrk
-* http://httpd.apache.org/docs/current/programs/ab.html
-* https://github.com/borgstrom/httpbenchmark
+        -X http://1.2.3.4:8080 http://target.com
