@@ -2,6 +2,9 @@
 About
 =====
 
+.. image:: https://travis-ci.org/povilasb/httpmeter.svg?branch=master
+    :target: https://travis-ci.org/povilasb/httpmeter
+
 This is a hackable python based HTTP/HTTPS benchmarking tool.
 It supports traffic proxying for both HTTP and HTTPS, thus also can be used to
 test performance of proxy servers.
