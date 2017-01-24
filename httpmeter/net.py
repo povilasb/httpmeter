@@ -15,7 +15,8 @@ class HttpRequests:
 
     def __init__(self, loop=None) -> None:
         self._loop = loop or asyncio.get_event_loop()
-        self._connector = aiohttp.TCPConnector(verify_ssl=False)
+        self._connector = aiohttp.TCPConnector(verify_ssl=False,
+                                               loop=self._loop)
         self._proxy_url = None
         self._headers = None
         self._on_response = None
@@ -48,7 +49,7 @@ class HttpRequests:
     async def make_get(self, url: str, start_time: float) -> Awaitable:
         resp = await aiohttp.request(
             'GET', url, connector=self._connector, proxy=self._proxy_url,
-            headers=self._headers)
+            headers=self._headers, loop=self._loop)
         text = await resp.read()
         if self._on_response:
             self._on_response(text, resp.status, start_time)

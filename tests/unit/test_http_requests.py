@@ -30,7 +30,7 @@ def describe_HttpRequests():
 
                     request.assert_called_with(
                         ANY, ANY, connector=ANY,
-                        headers=ANY, proxy='http://localhost:8080')
+                        headers=ANY, proxy='http://localhost:8080', loop=ANY)
 
         def describe_when_headers_are_set():
             @pytest.mark.asyncio
@@ -44,7 +44,7 @@ def describe_HttpRequests():
                     request.assert_called_with(
                         ANY, ANY, connector=ANY,
                         headers={'X-Header1': 'val1', 'X-Header2': 'val2'},
-                        proxy=ANY)
+                        proxy=ANY, loop=ANY)
 
         @pytest.mark.asyncio
         async def it_delegates_response_handling_to_on_response():
