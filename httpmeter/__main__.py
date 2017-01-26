@@ -1,19 +1,22 @@
 import sys
 import time
 from typing import List
+import multiprocessing
+import itertools
+import functools
 
-from . import net, cli, stats
+from . import net, cli, stats, utils
 
 
 class Benchmark:
     """Benchmark is used to execute performance tests and collect results."""
 
-    def __init__(self, config) -> None:
+    def __init__(self, config, loop=None) -> None:
         self._conf = config
 
         self.stats = []
         self.progress = stats.Progress()
-        self.requests = net.HttpRequests()\
+        self.requests = net.HttpRequests(loop)\
             .on_response(self._on_response)\
             .with_headers(config.headers)\
             .via_proxy(config.proxy)
@@ -36,16 +39,21 @@ class Benchmark:
         self.progress.update('.')
 
 
-def time_it(cb) -> float:
-    start_time = time.time()
-    result = cb()
-    return result, time.time() - start_time
+def make_requests(conf, loop) -> List[stats.ForRequest]:
+    return Benchmark(conf, loop).run()
 
 
 def main(args: list=sys.argv[1:]) -> None:
     conf = cli.parse_args(args)
 
-    requests_stats, duration = time_it(Benchmark(conf).run)
+    process_count = multiprocessing.cpu_count()
+    proc_pool = multiprocessing.Pool(processes=process_count)
+    proc_stats, duration = utils.time_it(lambda: proc_pool.map(
+        functools.partial(make_requests, conf),
+        net.make_event_loops(process_count),
+    ))
+
+    requests_stats = list(itertools.chain.from_iterable(proc_stats))
     bench_results = stats.ForBenchmark(requests_stats, conf.concurrency,
                                        duration).summary()
     print(stats.results_to_str(bench_results))

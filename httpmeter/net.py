@@ -53,3 +53,7 @@ class HttpRequests:
         text = await resp.read()
         if self._on_response:
             self._on_response(text, resp.status, start_time)
+
+
+def make_event_loops(n: int) -> Iterable[asyncio.AbstractEventLoop]:
+    return map(lambda _: asyncio.new_event_loop(), range(n))
