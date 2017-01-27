@@ -45,6 +45,8 @@ def make_requests(conf, loop) -> List[stats.ForRequest]:
 
 def main(args: list=sys.argv[1:]) -> None:
     conf = cli.parse_args(args)
+    if conf.use_uvloop:
+        net.use_uvloop()
 
     process_count = multiprocessing.cpu_count()
     proc_pool = multiprocessing.Pool(processes=process_count)

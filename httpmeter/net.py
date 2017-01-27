@@ -7,9 +7,6 @@ import aiohttp
 import uvloop
 
 
-asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-
-
 class HttpRequests:
     """Executes HTTP requests."""
 
@@ -57,3 +54,7 @@ class HttpRequests:
 
 def make_event_loops(n: int) -> Iterable[asyncio.AbstractEventLoop]:
     return map(lambda _: asyncio.new_event_loop(), range(n))
+
+
+def use_uvloop() -> None:
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())

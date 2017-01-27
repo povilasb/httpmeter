@@ -27,11 +27,15 @@ def parse_args(args: List[str]):
     )
     parser.add_argument(
         '-n', '--requests', metavar='N', default=1, type=int,
-        help='Number of requests to perform for the benchmarking session'
+        help='Number of requests to perform for the benchmarking session.'
     )
     parser.add_argument(
         '-X', '--proxy', metavar='proxy:port', type=str,
         help='Use a proxy server for the requests.'
+    )
+    parser.add_argument(
+        '--uvloop', dest='use_uvloop', default=False, action='store_true',
+        help='Use uvloop to increase networking performance.',
     )
     parser.add_argument('url', metavar='URL', type=str)
     return parser.parse_args(args=args)
