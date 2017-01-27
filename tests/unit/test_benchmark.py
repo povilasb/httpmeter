@@ -29,13 +29,15 @@ def describe_Bencmark():
                 requests.via_proxy.assert_called_with('http://localhost:1080')
 
     def describe__on_response():
-        def it_updates_progress():
-            bench = Benchmark(MagicMock())
-            bench.progress = MagicMock()
+        def describe_when_progress_output_is_set():
+            def it_updates_progress():
+                progress = MagicMock()
+                bench = Benchmark(MagicMock(), progress)
+                bench.progress = MagicMock()
 
-            bench._on_response('resp', 200, 0)
+                bench._on_response('resp', 200, 0)
 
-            bench.progress.update.assert_called_with('.')
+                progress.update.assert_called_with('.')
 
         @patch('time.time', MagicMock(return_value=100))
         def it_appends_request_stats():
