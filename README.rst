@@ -10,7 +10,7 @@ It supports traffic proxying for both HTTP and HTTPS, thus also can be used to
 test performance of proxy servers.
 
 It is implemented with asyncio and runs on Python >= 3.5.
-`uvloop <https://github.com/MagicStack/uvloop>`_ is used by default for
+You can optionally use `uvloop <https://github.com/MagicStack/uvloop>`_ for
 better performance.
 
 Usage
@@ -41,6 +41,9 @@ Options::
 
     -X, --proxy <http://user:pass@proxy:port>
         Proxy address. E.g. http://user1:pass123@localhost:8080
+
+    --uvloop
+        Use uvloop to increase networking performance.
 
 Other Tools
 ===========
