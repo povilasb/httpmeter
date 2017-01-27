@@ -39,11 +39,8 @@ Options::
         allowed. E.g.
             --header "Connection: close" --header "User-Agent: benchmark"
 
-    -X, --proxy <proxy:port>
-        Proxy address. E.g. http://localhost:8080
-
-    -P, --proxy-auth <username:password>
-        User and password for proxy authentication.
+    -X, --proxy <http://user:pass@proxy:port>
+        Proxy address. E.g. http://user1:pass123@localhost:8080
 
 Other Tools
 ===========

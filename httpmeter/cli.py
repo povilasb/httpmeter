@@ -30,11 +30,6 @@ def parse_args(args: List[str]):
         help='Number of requests to perform for the benchmarking session'
     )
     parser.add_argument(
-        '-P', '--proxy-auth',
-        metavar='username:password', type=str,
-        help='Supply BASIC Authentication credentials to a proxy.'
-    )
-    parser.add_argument(
         '-X', '--proxy', metavar='proxy:port', type=str,
         help='Use a proxy server for the requests.'
     )
