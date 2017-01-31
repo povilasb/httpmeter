@@ -11,12 +11,12 @@ from . import net, cli, stats, utils
 class Benchmark:
     """Benchmark is used to execute performance tests and collect results."""
 
-    def __init__(self, config, progress=None, loop=None) -> None:
+    def __init__(self, config, progress=None) -> None:
         self._conf = config
         self._progress = progress
 
         self.stats = []
-        self.requests = net.HttpRequests(loop)\
+        self.requests = net.HttpRequests()\
             .on_response(self._on_response)\
             .with_headers(config.headers)\
             .via_proxy(config.proxy)
