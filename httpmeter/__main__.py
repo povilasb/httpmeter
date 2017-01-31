@@ -40,7 +40,7 @@ class Benchmark:
 
 
 def make_requests(conf, progress, loop) -> List[stats.ForRequest]:
-    return Benchmark(conf, progress, loop).run()
+    return Benchmark(conf, progress).run()
 
 
 def main(args: list=sys.argv[1:]) -> None:
@@ -54,7 +54,7 @@ def main(args: list=sys.argv[1:]) -> None:
     proc_pool = multiprocessing.Pool(processes=process_count)
     proc_stats, duration = utils.time_it(lambda: proc_pool.map(
         functools.partial(make_requests, conf, progress),
-        net.make_event_loops(process_count),
+        range(process_count)
     ))
     proc_pool.close()
     proc_pool.join()

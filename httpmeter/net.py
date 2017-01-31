@@ -11,7 +11,7 @@ class HttpRequests:
     """Executes HTTP requests."""
 
     def __init__(self, loop=None) -> None:
-        self._loop = loop or asyncio.get_event_loop()
+        self._loop = loop or asyncio.new_event_loop()
         self._connector = aiohttp.TCPConnector(verify_ssl=False,
                                                loop=self._loop)
         self._proxy_url = None
@@ -50,10 +50,6 @@ class HttpRequests:
         text = await resp.read()
         if self._on_response:
             self._on_response(text, resp.status, start_time)
-
-
-def make_event_loops(n: int) -> Iterable[asyncio.AbstractEventLoop]:
-    return map(lambda _: asyncio.new_event_loop(), range(n))
 
 
 def use_uvloop() -> None:
