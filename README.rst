@@ -45,6 +45,11 @@ Options::
     --uvloop
         Use uvloop to increase networking performance.
 
+    -p N, --process-count N
+        Use N processes to distribute requests over separate CPU cores.
+        By default uses the same number of processes as there are CPU
+        cores.
+
 Other Tools
 ===========
 
@@ -63,5 +68,5 @@ Get dependencies::
 
 Run the benchmark::
 
-    $ pyenv/bin/python -m httpmeter -c 100 -n 500 -P username:password \
-        -X http://1.2.3.4:8080 http://target.com
+    $ pyenv/bin/python -m httpmeter -c 100 -n 500 \
+        -X http://username:password@1.2.3.4:8080 http://target.com
