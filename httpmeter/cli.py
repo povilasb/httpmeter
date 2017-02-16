@@ -1,5 +1,6 @@
 import argparse
 from typing import List, Tuple
+import multiprocessing
 
 
 def parse_header(header: str) -> Tuple[str, str]:
@@ -36,6 +37,11 @@ def parse_args(args: List[str]):
     parser.add_argument(
         '--uvloop', dest='use_uvloop', default=False, action='store_true',
         help='Use uvloop to increase networking performance.',
+    )
+    parser.add_argument(
+        '-p', '--process-count', metavar='N',
+        default=multiprocessing.cpu_count(), type=int,
+        help='Use N processes to distribute requests over separate CPU cores.'
     )
     parser.add_argument('url', metavar='URL', type=str)
     return parser.parse_args(args=args)

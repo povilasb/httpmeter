@@ -56,15 +56,14 @@ def main(args: list=sys.argv[1:]) -> None:
     if conf.use_uvloop:
         net.use_uvloop()
 
+    conf.concurrency, conf.requests = requests_per_process(
+        conf.process_count, conf)
+    proc_pool = multiprocessing.Pool(processes=conf.process_count)
+
     progress = stats.Progress()
-
-    process_count = multiprocessing.cpu_count()
-    conf.concurrency, conf.requests = requests_per_process(process_count, conf)
-
-    proc_pool = multiprocessing.Pool(processes=process_count)
     proc_stats, duration = utils.time_it(lambda: proc_pool.map(
         functools.partial(make_requests, conf, progress),
-        range(process_count)
+        range(conf.process_count)
     ))
     proc_pool.close()
     proc_pool.join()
@@ -73,7 +72,8 @@ def main(args: list=sys.argv[1:]) -> None:
 
     requests_stats = list(itertools.chain.from_iterable(proc_stats))
     bench_results = stats.ForBenchmark(
-        requests_stats, conf.concurrency * process_count, duration).summary()
+        requests_stats, conf.concurrency * conf.process_count,
+        duration).summary()
     print(stats.results_to_str(bench_results))
 
 
