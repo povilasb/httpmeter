@@ -3,7 +3,6 @@ from setuptools import setup, find_packages
 
 def requirements() -> list:
     return [
-        'typing==3.5.2.2',
         'aiohttp==1.2.0',
         'uvloop==0.7.2',
     ]
