@@ -2,8 +2,11 @@ from setuptools import setup, find_packages
 
 
 def requirements() -> list:
-    with open('requirements/prod.txt') as f:
-        return [l.strip() for l in f.readlines()]
+    return [
+        'typing==3.5.2.2',
+        'aiohttp==1.2.0',
+        'uvloop==0.7.2',
+    ]
 
 
 setup(
