@@ -9,15 +9,15 @@ py_requirements ?= requirements/prod.txt requirements/dev.txt
 coverage := $(virtualenv_dir)/bin/coverage
 
 
+.PHONY: test
 test: $(virtualenv_dir)
 	PYTHONPATH=$(PYTHONPATH):. $(coverage) run \
 		--source $(src_dir) --branch $(pytest) -s tests
 	$(coverage) report -m
-.PHONY: test
 
+.PHONY: lint
 lint: $(virtualenv_dir)
 	$(linter) $(src_dir)
-.PHONY: lint
 
 .PHONY: check-types
 check-types: $(virtualenv_dir)
