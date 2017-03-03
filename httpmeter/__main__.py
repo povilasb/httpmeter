@@ -8,6 +8,9 @@ import functools
 from . import net, cli, stats, utils
 
 
+RequestStats = stats.ForRequest
+
+
 class Benchmark:
     """Benchmark is used to execute performance tests and collect results."""
 
@@ -15,13 +18,13 @@ class Benchmark:
         self._conf = config
         self._progress = progress
 
-        self.stats: List[stats.ForRequest] = []
+        self.stats: List[RequestStats] = []
         self.requests = net.HttpRequests()\
             .on_response(self._on_response)\
             .with_headers(config.headers)\
             .via_proxy(config.proxy)
 
-    def run(self) -> List[stats.ForRequest]:
+    def run(self) -> List[RequestStats]:
         """Executes benchmark."""
         self.requests.exec_to(self._conf.url, self._conf.concurrency,
                               self._conf.requests)
