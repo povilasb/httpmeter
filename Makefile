@@ -24,7 +24,7 @@ check-types: $(virtualenv_dir)
 	mypy --ignore-missing-imports httpmeter
 
 $(virtualenv_dir): $(py_requirements)
-	virtualenv $@ -p $(python)
+	$(python) -m venv $@
 	for r in $^ ; do \
 		$(pip) install -r $$r ; \
 	done
