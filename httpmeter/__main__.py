@@ -3,7 +3,6 @@ import time
 from typing import List, Tuple
 import multiprocessing
 import itertools
-import functools
 
 from . import net, cli, stats, utils
 
@@ -42,8 +41,8 @@ class Benchmark:
             self._progress.update('.')
 
 
-def make_requests(conf, progress, proc_nr: int) -> List[stats.ForRequest]:
-    return Benchmark(conf, progress).run()
+def make_requests(args: Tuple) -> List[stats.ForRequest]:
+    return Benchmark(*args).run()
 
 
 def requests_per_process(process_count: int, conf) -> Tuple[int, int]:
@@ -65,8 +64,8 @@ def main(args: list=sys.argv[1:]) -> None:
 
     progress = stats.Progress()
     proc_stats, duration = utils.time_it(lambda: proc_pool.map(
-        functools.partial(make_requests, conf, progress),
-        range(conf.process_count)
+        make_requests,
+        [(conf, progress) for _ in range(conf.process_count)]
     ))
     proc_pool.close()
     proc_pool.join()
