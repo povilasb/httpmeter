@@ -39,7 +39,7 @@ class Benchmark:
             self._progress.update('.')
 
 
-def make_requests(conf, progress, loop) -> List[stats.ForRequest]:
+def make_requests(conf, progress, proc_nr: int) -> List[stats.ForRequest]:
     return Benchmark(conf, progress).run()
 
 
