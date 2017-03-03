@@ -24,9 +24,9 @@ class ForRequest:
 
 class BenchmarkResults:
     def __init__(self, min_doc_len: int, avg_doc_len: int, max_doc_len: int,
-                 concurrency: int, completed_requests: int, reqs_per_sec: int,
-                 min_req_time: int, avg_req_time: int, max_req_time: int,
-                 status_codes: Dict[int, int]) -> None:
+                 concurrency: int, completed_requests: int, reqs_per_sec:
+                 float, min_req_time: int, avg_req_time: int, max_req_time:
+                 int, status_codes: Dict[int, int]) -> None:
         self.min_doc_len = min_doc_len
         self.avg_doc_len = avg_doc_len
         self.max_doc_len = max_doc_len

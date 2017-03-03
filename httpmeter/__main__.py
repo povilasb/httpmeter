@@ -15,7 +15,7 @@ class Benchmark:
         self._conf = config
         self._progress = progress
 
-        self.stats = []
+        self.stats: List[stats.ForRequest] = []
         self.requests = net.HttpRequests()\
             .on_response(self._on_response)\
             .with_headers(config.headers)\

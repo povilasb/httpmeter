@@ -1,10 +1,13 @@
 import asyncio
 from functools import reduce
 import time
-from typing import Iterable, Awaitable, Dict
+from typing import Awaitable, Dict, List, Callable
 
 import aiohttp
 import uvloop
+
+
+ResponseHandler = Callable[[str, int, float], None]
 
 
 class HttpRequests:
@@ -14,9 +17,9 @@ class HttpRequests:
         self._loop = loop or asyncio.new_event_loop()
         self._connector = aiohttp.TCPConnector(verify_ssl=False,
                                                loop=self._loop)
-        self._proxy_url = None
-        self._headers = None
-        self._on_response = None
+        self._proxy_url: str = None
+        self._headers: Dict[str, str] = None
+        self._on_response: ResponseHandler = None
 
     def exec_to(self, url: str, concurrency: int,
                 total_requests: int) -> None:
@@ -27,23 +30,23 @@ class HttpRequests:
 
         self._connector.close()
 
-    def via_proxy(self, proxy_url: str) -> 'HttpRequest':
+    def via_proxy(self, proxy_url: str) -> 'HttpRequests':
         self._proxy_url = proxy_url
         return self
 
-    def with_headers(self, headers: Dict[str, str]) -> 'HttpRequest':
+    def with_headers(self, headers: Dict[str, str]) -> 'HttpRequests':
         self._headers = headers
         return self
 
-    def on_response(self, cb) -> 'HttpRequest':
+    def on_response(self, cb: ResponseHandler) -> 'HttpRequests':
         self._on_response = cb
         return self
 
-    def make_requests(self, url: str, count: int) -> Iterable[Awaitable]:
+    def make_requests(self, url: str, count: int) -> List[Awaitable]:
         return reduce(lambda reqs, _: reqs + [self.make_get(url, time.time())],
                       range(count), [])
 
-    async def make_get(self, url: str, start_time: float) -> Awaitable:
+    async def make_get(self, url: str, start_time: float):
         resp = await aiohttp.request(
             'GET', url, connector=self._connector, proxy=self._proxy_url,
             headers=self._headers, loop=self._loop)
