@@ -9,7 +9,7 @@ This is a hackable python based HTTP/HTTPS benchmarking tool.
 It supports traffic proxying for both HTTP and HTTPS, thus also can be used to
 test performance of proxy servers.
 
-It is implemented with asyncio and runs on Python >= 3.5.
+It is implemented with asyncio and runs on Python >= 3.6.
 You can optionally use `uvloop <https://github.com/MagicStack/uvloop>`_ for
 better performance.
 

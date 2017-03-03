@@ -22,7 +22,7 @@ setup(
         'console_scripts': ['httpmeter = httpmeter.__main__:main']
     },
     classifiers=[
-        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Operating System :: POSIX :: Linux',
         'Natural Language :: English',
         'Development Status :: 3 - Alpha',

@@ -1,6 +1,6 @@
 src_dir := httpmeter
 
-python ?= python3.5
+python ?= python3.6
 virtualenv_dir := pyenv
 pip := $(virtualenv_dir)/bin/pip
 pytest := $(virtualenv_dir)/bin/py.test
