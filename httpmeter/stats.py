@@ -23,10 +23,10 @@ class ForRequest:
 
 
 class BenchmarkResults:
-    def __init__(self, min_doc_len: int, avg_doc_len: int, max_doc_len: int,
-                 concurrency: int, completed_requests: int, reqs_per_sec:
-                 float, min_req_time: int, avg_req_time: int, max_req_time:
-                 int, status_codes: Dict[int, int]) -> None:
+    def __init__(self, min_doc_len: int, avg_doc_len: float, max_doc_len: int,
+                 concurrency: int, completed_requests: int,
+                 reqs_per_sec: float, min_req_time: int, avg_req_time: float,
+                 max_req_time: int, status_codes: Dict[int, int]) -> None:
         self.min_doc_len = min_doc_len
         self.avg_doc_len = avg_doc_len
         self.max_doc_len = max_doc_len
@@ -39,7 +39,7 @@ class BenchmarkResults:
         self.status_codes = status_codes
 
 
-def min_avg_max(iter_: Iterable[float]) -> Tuple[float, float, float]:
+def min_avg_max(iter_: Iterable[float]) -> Tuple[int, float, int]:
     it1, it2, it3 = tee(iter_, 3)
     return min(it1), utils.avg(it2), max(it3)
 
