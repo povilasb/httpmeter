@@ -6,6 +6,7 @@ python:
 
 script:
   - make lint
+  - make check-types
   - make test
 
 after_success:
