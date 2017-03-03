@@ -7,7 +7,10 @@ python:
 script:
   - make lint
   - make check-types
-  - make test
+  - pip install -r requirements/prod.txt
+  - pip install -r requirements/dev.txt
+  - PYTHONPATH=$PYTHONPATH:. coverage run --source httpmeter --branch pytest -s tests
+  - coverage report -m
 
 after_success:
   - pyenv/bin/coveralls
