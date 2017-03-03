@@ -1,5 +1,5 @@
 from itertools import tee
-from typing import Iterable
+from typing import Iterable, Tuple, Any
 import time
 
 
@@ -15,7 +15,7 @@ def avg(iter_: Iterable[int]) -> float:
         return 0
 
 
-def time_it(cb) -> float:
+def time_it(cb) -> Tuple[Any, float]:
     start_time = time.time()
     result = cb()
     return result, time.time() - start_time

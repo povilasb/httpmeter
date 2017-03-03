@@ -26,7 +26,7 @@ class BenchmarkResults:
     def __init__(self, min_doc_len: int, avg_doc_len: int, max_doc_len: int,
                  concurrency: int, completed_requests: int, reqs_per_sec: int,
                  min_req_time: int, avg_req_time: int, max_req_time: int,
-                 status_codes: Dict[str, int]) -> None:
+                 status_codes: Dict[int, int]) -> None:
         self.min_doc_len = min_doc_len
         self.avg_doc_len = avg_doc_len
         self.max_doc_len = max_doc_len
@@ -39,7 +39,7 @@ class BenchmarkResults:
         self.status_codes = status_codes
 
 
-def min_avg_max(iter_: Iterable[int]) -> Tuple[int, float, int]:
+def min_avg_max(iter_: Iterable[float]) -> Tuple[float, float, float]:
     it1, it2, it3 = tee(iter_, 3)
     return min(it1), utils.avg(it2), max(it3)
 
@@ -56,7 +56,7 @@ class ForBenchmark:
     def content_sizes(self) -> Iterable[int]:
         return map(lambda entry: entry.content_size, self.stats)
 
-    def durations(self) -> Iterable[int]:
+    def durations(self) -> Iterable[float]:
         return map(lambda entry: entry.duration, self.stats)
 
     def status_codes(self) -> Dict[int, int]:
@@ -80,7 +80,7 @@ class Progress:
     """Displays responses progress."""
 
     def __init__(self) -> None:
-        self._last_flushed = 0
+        self._last_flushed = 0.0
         self._flush_interval = 0.2
 
     def update(self, status: str) -> None:
@@ -115,7 +115,7 @@ def results_to_str(results: BenchmarkResults) -> str:
     return '\n'.join(lines)
 
 
-def inc(assoc_arr: dict, key: Any) -> None:
+def inc(assoc_arr: dict, key: Any) -> dict:
     """Increase by one or initialize value in associative array."""
     assoc_arr[key] = assoc_arr.get(key, 0) + 1
     return assoc_arr
