@@ -19,6 +19,10 @@ lint: $(virtualenv_dir)
 	$(linter) $(src_dir)
 .PHONY: lint
 
+.PHONY: check-types
+check-types: $(virtualenv_dir)
+	mypy --ignore-missing-imports httpmeter
+
 $(virtualenv_dir): $(py_requirements)
 	virtualenv $@ -p $(python)
 	for r in $^ ; do \
