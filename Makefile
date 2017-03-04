@@ -6,15 +6,12 @@ pip := $(virtualenv_dir)/bin/python -m pip
 pytest := $(virtualenv_dir)/bin/py.test
 linter := $(virtualenv_dir)/bin/python -m flake8
 py_requirements ?= requirements/prod.txt requirements/dev.txt
-coverage := $(virtualenv_dir)/bin/coverage
 mypy := $(virtualenv_dir)/bin/python -m mypy
 
 
 .PHONY: test
 test: $(virtualenv_dir)
-	PYTHONPATH=$(PYTHONPATH):. $(coverage) run \
-		--source $(src_dir) --branch $(pytest) -s tests
-	$(coverage) report -m
+	PYTHONPATH=$(PYTHONPATH):. $(pytest) --cov=$(src_dir) tests
 
 .PHONY: lint
 lint: $(virtualenv_dir)

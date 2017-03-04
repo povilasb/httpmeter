@@ -9,8 +9,7 @@ script:
   - make check-types
   - pip install -r requirements/prod.txt
   - pip install -r requirements/dev.txt
-  - PYTHONPATH=$PYTHONPATH:. coverage run --source httpmeter --branch pytest -s tests
-  - coverage report -m
+  - PYTHONPATH=$PYTHONPATH:. py.test --cov=httpmeter tests
 
 after_success:
   - pyenv/bin/coveralls
